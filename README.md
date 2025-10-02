@@ -1,4 +1,4 @@
-# 🏗️ How to Set Up Active Directory in Microsoft Azure
+# 🏗️ Deploying Active Directory in Azure: A Step-by-Step Guide Using Virtual Machines
 
 <p align="center">
   <img width="300" height="168" alt="Active Directory" src="https://github.com/user-attachments/assets/ab43591a-2189-41f9-875f-b6e6c8971685" />
