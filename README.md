@@ -56,12 +56,12 @@ This tutorial will help you guide through the initial setup of Active Directory 
   - Name: `dc-1`
   - Image: Windows Server 2022
   - Username: `labuser`
-  - Password: `Cyberlab123!` (make sure to pick your own strong password in real setups)
+  - Password: `Cyberlab123!`
   - Region: same as your VNet
   - Size: `Standard_D2s_v3` (2 CPUs, 8 GB RAM)
   - Virtual Network: `AD-VNet`
   - Subnet: `AD-Subnet`
-  - Public IP: Enabled (so you can RDP in)
+  - Public IP: Enabled
   - Allow RDP inbound on port 3389
 
 ![Create DC VM](https://github.com/user-attachments/assets/ed2da35c-813d-4541-ad75-abeda564be89)
@@ -79,7 +79,7 @@ This tutorial will help you guide through the initial setup of Active Directory 
 Now, connect via RDP to `dc-1`:
 
 - Open Windows Defender Firewall (`wf.msc`).
-- For now (since this is a lab), disable the firewall on **Domain**, **Private**, and **Public** profiles.
+- For now, disable the firewall on **Domain**, **Private**, and **Public** profiles.
 
 ---
 
@@ -88,16 +88,14 @@ Now, connect via RDP to `dc-1`:
 - Back to **Virtual Machines** > *Create*.
 - Configure it like this:
   - Name: `client-1`
-  - Image: Windows 10 (latest)
+  - Image: Windows 10
   - Username: `labuser`
   - Password: `Cyberlab123!`
   - Region: same as `dc-1`
   - Virtual Network: `AD-VNet`
   - Subnet: `AD-Subnet`
-  - Public IP: Enabled (for RDP)
+  - Public IP: Enabled
   - Allow inbound RDP (port 3389)
-This VM will act as the machine you want to join to the domain.
-
 
 ![Create Client VM](https://github.com/user-attachments/assets/4eb2a1fc-4ba9-4ca6-a3f0-97768b26d870)
 
@@ -109,7 +107,7 @@ This VM will act as the machine you want to join to the domain.
 - Go to **Networking** > **Network Settings** > **DNS Servers**.
 - Change from **Default** to **Custom**.
 - Enter the private IP address of `dc-1`.
-- Hit **Save**, then **restart client-1** for the change to take effect.
+- Hit **Save**, then **restart client-1**.
 
 ![Configure DNS](https://github.com/user-attachments/assets/d7e466ce-df12-4d54-9105-0f5d99c728d4)
 
@@ -119,13 +117,13 @@ This VM will act as the machine you want to join to the domain.
 
 RDP into `client-1` and open PowerShell:
 
-- Ping the Domain Controller’s private IP (like `10.0.0.4`) to check connectivity:
+- Ping the Domain Controller’s private IP:
 
 <p align="center">
   <img width="675" height="398" alt="PowerShell Ping" src="https://github.com/user-attachments/assets/c0601cac-60f3-43e6-be2b-af1f5b9fb023" />
 </p>
 
-- Run `ipconfig /all` and look for the DNS server entry — it should show the Domain Controller’s IP.
+- Run `ipconfig /all` to verify the DNS server is correctly pointing to `dc-1`.
 
 <p align="center">
   <img width="1996" height="1249" alt="PowerShell ipconfig" src="https://github.com/user-attachments/assets/9578cc37-2f34-4305-83b6-2ed99166245b" />
@@ -133,4 +131,79 @@ RDP into `client-1` and open PowerShell:
 
 ---
 
-**You now have the basics in place. From here, you can promote your Domain Controller, join the client to the domain, and explore Active Directory features like user and group management.**
+## Step 8: Promote `dc-1` to Domain Controller
+
+- Connect to `dc-1` via RDP.
+- Open **Server Manager**.
+- Click the **flag icon** in the top-right for post-installation tasks.
+- Select **Promote this server to a domain controller**.
+- In the wizard:
+  - Choose **Add a new forest**
+  - Domain name: `mydomain.com`
+  - Set the DSRM password
+  - Complete the wizard and restart
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0b5ab5ad-b53c-41da-9c49-f039a9dabf0e" alt="Promote to Domain Controller wizard" width="756" height="533" />
+</p>
+
+- After restart, log in as: `mydomain.com\reggie-admin`
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b2c4f156-4b50-4e63-b0da-bc37a1b3ce4e" alt="Domain Admin login" width="798" height="476" />
+</p>
+
+- Open **Active Directory Users and Computers** to verify setup
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/dbf5c75f-b67e-4df0-8c55-8a2472d6abc3" alt="Active Directory Users and Computers console" width="822" height="494" />
+</p>
+
+---
+
+## Step 9: Join `client-1` to the Domain
+
+- Log into `client-1` as `labuser`
+- Right-click Start > **System** > **Rename this PC (Advanced)**
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/360c7b0f-3916-4639-b8b5-7aa10920b994" alt="System properties rename PC dialog" width="825" height="552" />
+</p>
+
+- Under **Computer Name**, click **Change**
+- Select **Domain**, type `mydomain.com`
+- Enter domain credentials: `mydomain.com\jane_admin`
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/1fa62d0e-fadb-44b2-af2c-c5129f8c551f" alt="Domain join dialog" width="822" height="494" />
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a567000d-9c41-4f16-8fab-48d7194a8882" alt="Domain join credentials prompt" width="462" height="304" />
+</p>
+
+- After domain join, restart `client-1`
+
+---
+
+## Step 10: Verify `client-1` in Active Directory
+
+- Log into `dc-1` as `mydomain.com\reggie-admin`
+- Open **Active Directory Users and Computers**
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f618c498-f456-4e22-94fc-3ed4d4ede254" alt="Active Directory Users and Computers console" width="827" height="497" />
+</p>
+
+- Navigate to the **Computers** container
+- Confirm `client-1` appears
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a7df77d9-65e6-4e42-8edf-dcddaa63a371" alt="Client-1 computer object in AD" width="460" height="256" />
+</p>
+
+---
+
+## 🧾 Conclusion
+
+You’ve successfully deployed Active Directory in Azure using two virtual machines. The domain controller (`dc-1`) was promoted to manage `mydomain.com`, and the client (`client-1`) was joined to the domain. This setup gives you a working AD environment for testing, learning, or building out more advanced features.
