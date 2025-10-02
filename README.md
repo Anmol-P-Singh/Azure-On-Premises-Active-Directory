@@ -120,14 +120,19 @@ RDP into `client-1` and open PowerShell:
 - Ping the Domain Controller’s private IP:
 
 <p align="center">
-  <img width="675" height="398" alt="PowerShell Ping" src="https://github.com/user-attachments/assets/c0601cac-60f3-43e6-be2b-af1f5b9fb023" />
+  <img width="151" height="49" alt="Screenshot 2025-10-02 092422" src="https://github.com/user-attachments/assets/e70b7473-c7ad-4688-adc7-b4943c12b354" />
+
 </p>
 
 - Run `ipconfig /all` to verify the DNS server is correctly pointing to `dc-1`.
 
-<p align="center">
-  <img width="1996" height="1249" alt="PowerShell ipconfig" src="https://github.com/user-attachments/assets/9578cc37-2f34-4305-83b6-2ed99166245b" />
-</p>
+<div style="text-align: center;">
+  <img width="114" height="45" alt="Screenshot 2025-10-02 092534" src="https://github.com/user-attachments/assets/1af3df0f-5ece-47c4-aaaa-3d281acbc7f7" />
+</div>
+<div style="text-align: center; margin-top: 10px;">
+  <img width="827" height="499" alt="Screenshot 2025-10-02 092636" src="https://github.com/user-attachments/assets/9455afc7-6d8b-4f55-b432-f6749de3f324" />
+</div>
+
 
 ---
 
